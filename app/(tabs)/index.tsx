@@ -6,8 +6,15 @@ import TaskListCard from "@/components/TaskListCard/TaskListCard";
 import { Box } from "@/components/ui/box";
 import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
+import { useLogout } from "@/hooks/useLogout";
 import { Link } from "expo-router";
-import { FlatList, Pressable, RefreshControl } from "react-native";
+import {
+  FlatList,
+  Pressable,
+  RefreshControl,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 
 const MOCK_TASK_LISTS: TaskList[] = [
   {
@@ -44,6 +51,7 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState<boolean>(true);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const { handleLogout } = useLogout();
 
   const fetchTaskLists = async (): Promise<TaskList[]> => {
     return new Promise((resolve, reject) => {
@@ -131,9 +139,28 @@ export default function HomeScreen() {
           />
         )}
       </Box>
+      <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+        <Text style={styles.logoutText}>Cerrar sesión</Text>
+      </TouchableOpacity>
       <Box>
         <Link href="/storybook">Open Storybook</Link>
       </Box>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  logoutButton: {
+    margin: 16,
+    height: 48,
+    backgroundColor: "#E24B4A",
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  logoutText: {
+    color: "white",
+    fontSize: 15,
+    fontWeight: "600",
+  },
+});
