@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   DarkTheme,
   DefaultTheme,
@@ -12,6 +11,7 @@ import "react-native-reanimated";
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 import "@/global.css";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { onAuthStateChange } from "@/services/auth/authServices";
 import { ActivityIndicator, View } from "react-native";
 
 export const unstable_settings = {
@@ -24,27 +24,18 @@ export default function RootLayout() {
   const segments = useSegments();
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const token = await AsyncStorage.getItem("auth_token");
-        const isAuthScreen = segments[0] === "login";
-        /* if (!token && !isAuthScreen) {
-          router.replace("/login");
-        } */
-        if (token && isAuthScreen) {
-          router.replace("/(tabs)");
-        }
-      } catch (e) {
-        const isAuthScreen = segments[0] === "login";
-        if (!isAuthScreen) {
-          router.replace("/login");
-        }
-      } finally {
-        setIsReady(true);
+    const unsubscribe = onAuthStateChange((user) => {
+      const isAuthScreen = segments[0] === "login";
+      if (!user && !isAuthScreen) {
+        router.replace("/login");
       }
-    };
+      if (user && isAuthScreen) {
+        router.replace("/(tabs)");
+      }
+      setIsReady(true);
+    });
 
-    checkAuth();
+    return () => unsubscribe();
   }, []);
 
   // Evita un flash de la pantalla principal antes de redirigir
