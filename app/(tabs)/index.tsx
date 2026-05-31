@@ -1,166 +1,156 @@
-import { TaskList } from "@/types/TaskList";
-import { useEffect, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-
+import FAB from "@/components/FAB";
 import TaskListCard from "@/components/TaskListCard/TaskListCard";
-import { Box } from "@/components/ui/box";
-import { Spinner } from "@/components/ui/spinner";
-import { Text } from "@/components/ui/text";
-import { useLogout } from "@/hooks/useLogout";
-import { Link } from "expo-router";
+import { useTaskLists } from "@/hooks/useTaskLists";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router, useFocusEffect } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   Pressable,
   RefreshControl,
   StyleSheet,
-  TouchableOpacity,
+  Text,
+  View,
 } from "react-native";
-
-const MOCK_TASK_LISTS: TaskList[] = [
-  {
-    id: "1",
-    title: "Computer Science",
-    subtitle: "Algorithms and data structures",
-    percentage: 60,
-    tags: ["school", "important"],
-    idColor: "bg-blue-500",
-    idIcon: "code",
-  },
-  {
-    id: "2",
-    title: "History",
-    subtitle: "World War II notes",
-    percentage: 30,
-    tags: ["reading"],
-    idColor: "bg-green-500",
-    idIcon: "menu-book",
-  },
-  {
-    id: "3",
-    title: "Math",
-    subtitle: "Calculus exercises",
-    percentage: 90,
-    tags: ["practice", "exam"],
-    idColor: "bg-purple-500",
-    idIcon: "functions",
-  },
-];
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
-  const [lists, setLists] = useState<TaskList[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const { handleLogout } = useLogout();
-
-  const fetchTaskLists = async (): Promise<TaskList[]> => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const shouldFail = Math.random() < 0.3;
-
-        if (shouldFail) {
-          reject(new Error("Failed to fetch lists"));
-        } else {
-          resolve(MOCK_TASK_LISTS);
-        }
-      }, 1000);
-    });
-  };
-
-  const loadLists = async (fromRefresh: boolean = false) => {
-    try {
-      setError(null);
-      if (fromRefresh) {
-        setLoading(true);
-      }
-      const data = await fetchTaskLists();
-      setLists(data);
-      if (fromRefresh) {
-        setLoading(false);
-      }
-    } catch (err) {
-      setError("Something went wrong");
-      setLists([]);
-    }
-  };
+  const { taskLists, loading, refreshing, error, onRefresh } = useTaskLists();
+  const [fullName, setFullName] = useState<string>("");
 
   useEffect(() => {
-    const init = async () => {
-      setLoading(true);
-      await loadLists();
-      setLoading(false);
+    const loadFullName = async () => {
+      const name = await AsyncStorage.getItem("fullName");
+      if (name) setFullName(name);
     };
-
-    init();
+    loadFullName();
   }, []);
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await loadLists();
-    setRefreshing(false);
-  };
+  useFocusEffect(
+    React.useCallback(() => {
+      onRefresh();
+    }, []),
+  );
 
   return (
-    <SafeAreaView className="flex-1">
-      <Box className="flex-1 p-4">
-        <Text className="text-2xl mb-4">Task Lists</Text>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.inner}>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Mis listas</Text>
+          <Text style={styles.subtitle}>
+            Bienvenido de vuelta, {fullName || ""}
+          </Text>
+        </View>
 
-        {/** Loading */}
+        {/* Loading */}
         {loading && (
-          <Box className="mt-4">
-            <Spinner size="large" color="grey" />
-          </Box>
+          <View style={styles.centered}>
+            <ActivityIndicator size="large" color="#1D4ED8" />
+          </View>
         )}
 
-        {/** Error */}
+        {/* Error */}
         {!loading && error && (
-          <>
-            <Text className="text-red-500 mb-2">{error}</Text>
-            <Pressable onPress={() => loadLists(true)}>
-              <Text className="text-blue-500 underline">Retry</Text>
+          <View style={styles.centered}>
+            <Text style={styles.errorText}>{error}</Text>
+            <Pressable onPress={onRefresh}>
+              <Text style={styles.retryText}>Reintentar</Text>
             </Pressable>
-          </>
+          </View>
         )}
 
-        {/** Empty */}
-        {!loading && !error && lists.length === 0 && (
-          <Text>No tasks available</Text>
+        {/* Empty */}
+        {!loading && !error && taskLists.length === 0 && (
+          <View style={styles.centered}>
+            <Text style={styles.emptyTitle}>No tienes listas aún</Text>
+            <Text style={styles.emptySubtitle}>
+              Toca el botón + para crear tu primera lista
+            </Text>
+          </View>
         )}
 
-        {/** List */}
-        {!loading && !error && (
+        {/* Lista */}
+        {!loading && !error && taskLists.length > 0 && (
           <FlatList
-            data={lists}
+            data={taskLists}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => <TaskListCard item={item} />}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.listContent}
           />
         )}
-      </Box>
-      <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-        <Text style={styles.logoutText}>Cerrar sesión</Text>
-      </TouchableOpacity>
-      <Box>
-        <Link href="/storybook">Open Storybook</Link>
-      </Box>
+      </View>
+      <View style={styles.fabContainer}>
+        <FAB onPress={() => router.push("/createTaskList")} />
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  logoutButton: {
-    margin: 16,
-    height: 48,
-    backgroundColor: "#E24B4A",
-    borderRadius: 12,
+  container: {
+    flex: 1,
+    backgroundColor: "#f8f9fa",
+    overflow: "visible",
+  },
+  inner: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 16,
+  },
+  header: {
+    marginBottom: 24,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: "700",
+    color: "#0f172a",
+    letterSpacing: -0.5,
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: "#64748b",
+  },
+  centered: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    gap: 8,
   },
-  logoutText: {
-    color: "white",
-    fontSize: 15,
+  errorText: {
+    fontSize: 14,
+    color: "#E24B4A",
+    textAlign: "center",
+  },
+  retryText: {
+    fontSize: 14,
+    color: "#1D4ED8",
     fontWeight: "600",
+  },
+  emptyTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#0f172a",
+    textAlign: "center",
+  },
+  emptySubtitle: {
+    fontSize: 13,
+    color: "#94a3b8",
+    textAlign: "center",
+  },
+  listContent: {
+    paddingBottom: 100,
+  },
+  fabContainer: {
+    position: "absolute",
+    bottom: 24,
+    right: 24,
+    zIndex: 10,
   },
 });
