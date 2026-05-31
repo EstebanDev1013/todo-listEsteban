@@ -56,15 +56,15 @@ export const useRegister = () => {
     try {
       setLoading(true);
       setError(null);
-      const { user, token } = await register(email, password);
-      await AsyncStorage.setItem("token", token);
       await createUser({
+        name: fullName,
         email,
-        fullName,
         password,
         role: "USER",
-        providerUid: user.uid,
       });
+      const { user, token } = await register(email, password);
+      await AsyncStorage.setItem("token", token);
+      await AsyncStorage.setItem("fullName", fullName);
 
       router.replace("/(tabs)");
     } catch (e) {
