@@ -1,6 +1,13 @@
 import { Todo } from "@/services/tasks/getTodosWithCategories";
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useRef, useState } from "react";
+import {
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 
 const PRIORITY_STYLES: Record<
   string,
@@ -18,8 +25,17 @@ const TodoItem: React.FC<{
   onEdit: (todo: Todo) => void;
   onDelete: (todo: Todo) => void;
 }> = ({ item, categoryColor, onToggle, onEdit, onDelete }) => {
-  const [menuOpen, setMenuOpen] = React.useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [dropdownPos, setDropdownPos] = useState({ x: 0, y: 0 });
+  const menuButtonRef = useRef<React.ComponentRef<typeof TouchableOpacity>>(null);
   const priority = PRIORITY_STYLES[item.priority] ?? PRIORITY_STYLES.LOW;
+
+  const openMenu = () => {
+    menuButtonRef.current?.measure((_fx, _fy, width, height, px, py) => {
+      setDropdownPos({ x: px + width - 144, y: py + height });
+      setMenuOpen(true);
+    });
+  };
 
   return (
     <View style={styles.card}>
@@ -69,39 +85,50 @@ const TodoItem: React.FC<{
       </View>
 
       {/* Menú tres puntitos */}
-      <View>
-        <TouchableOpacity
-          style={styles.menuButton}
-          onPress={() => setMenuOpen((v) => !v)}
-        >
-          <Text style={styles.menuDots}>⋮</Text>
-        </TouchableOpacity>
-        {menuOpen && (
-          <View style={styles.menuDropdown}>
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => {
-                setMenuOpen(false);
-                onEdit(item);
-              }}
-            >
-              <Text style={styles.menuItemText}>✏️ Editar</Text>
-            </TouchableOpacity>
-            <View style={styles.menuDivider} />
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => {
-                setMenuOpen(false);
-                onDelete(item);
-              }}
-            >
-              <Text style={[styles.menuItemText, { color: "#E24B4A" }]}>
-                🗑️ Eliminar
-              </Text>
-            </TouchableOpacity>
+      <TouchableOpacity
+        ref={menuButtonRef}
+        style={styles.menuButton}
+        onPress={openMenu}
+      >
+        <Text style={styles.menuDots}>⋮</Text>
+      </TouchableOpacity>
+
+      <Modal visible={menuOpen} transparent animationType="none">
+        <TouchableWithoutFeedback onPress={() => setMenuOpen(false)}>
+          <View style={StyleSheet.absoluteFill}>
+            <TouchableWithoutFeedback>
+              <View
+                style={[
+                  styles.menuDropdown,
+                  { left: dropdownPos.x, top: dropdownPos.y },
+                ]}
+              >
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => {
+                    setMenuOpen(false);
+                    onEdit(item);
+                  }}
+                >
+                  <Text style={styles.menuItemText}>✏️ Editar</Text>
+                </TouchableOpacity>
+                <View style={styles.menuDivider} />
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => {
+                    setMenuOpen(false);
+                    onDelete(item);
+                  }}
+                >
+                  <Text style={[styles.menuItemText, { color: "#E24B4A" }]}>
+                    🗑️ Eliminar
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableWithoutFeedback>
           </View>
-        )}
-      </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </View>
   );
 };
@@ -120,11 +147,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.06,
     shadowRadius: 4,
     elevation: 2,
-    overflow: "hidden",
   },
   colorAccent: {
     width: 5,
     alignSelf: "stretch",
+    borderTopLeftRadius: 16,
+    borderBottomLeftRadius: 16,
   },
   checkbox: {
     padding: 14,
@@ -192,8 +220,6 @@ const styles = StyleSheet.create({
   },
   menuDropdown: {
     position: "absolute",
-    right: 14,
-    top: 36,
     backgroundColor: "white",
     borderRadius: 12,
     borderWidth: 1,
@@ -203,7 +229,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 8,
-    zIndex: 999,
     minWidth: 130,
   },
   menuItem: {

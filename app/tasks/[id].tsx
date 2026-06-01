@@ -5,20 +5,27 @@ import { Todo } from "@/services/tasks/getTodosWithCategories";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import React from "react";
 import {
-    ActivityIndicator,
-    FlatList,
-    RefreshControl,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TaskDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { category, loading, refreshing, error, onRefresh, toggleTodo } =
-    useTodos(id);
+  const {
+    category,
+    loading,
+    refreshing,
+    error,
+    onRefresh,
+    toggleTodo,
+    removeTodo,
+  } = useTodos(id);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -35,12 +42,26 @@ export default function TaskDetailScreen() {
   };
 
   const handleEdit = (todo: Todo) => {
-    router.push(`/tasks/edit/${todo.id}`);
+    router.push({
+      pathname: "/tasks/editTodo",
+      params: {
+        id: todo.id,
+        title: todo.title,
+        description: todo.description,
+        priority: todo.priority,
+        dueDate: todo.dueDate ?? "",
+        completed: String(todo.completed),
+        categories: JSON.stringify(todo.categories),
+      },
+    });
   };
 
-  const handleDelete = (todo: Todo) => {
-    // Lo implementamos cuando hagamos el endpoint DELETE /todos/{id}
-    console.log("Delete todo:", todo.id);
+  const handleDelete = async (todo: Todo) => {
+    try {
+      await removeTodo(todo);
+    } catch (e) {
+      console.log("Error al eliminar todo:", e);
+    }
   };
 
   return (
