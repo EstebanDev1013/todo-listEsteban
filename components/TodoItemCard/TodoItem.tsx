@@ -1,4 +1,4 @@
-import { Todo } from "@/services/tasks/getTodosWithCategories";
+import { Todo } from "@/types/tasks";
 import React, { useRef, useState } from "react";
 import {
   Modal,

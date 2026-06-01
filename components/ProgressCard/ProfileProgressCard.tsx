@@ -1,4 +1,4 @@
-import { CategoryWithTodos } from "@/services/tasks/getTodosWithCategories";
+import { CategoryWithTodos } from "@/types/tasks";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 

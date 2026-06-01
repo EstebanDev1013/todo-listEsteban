@@ -1,4 +1,4 @@
-import { Todo } from "@/services/tasks/getTodosWithCategories";
+import { Todo } from "@/types/tasks";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 

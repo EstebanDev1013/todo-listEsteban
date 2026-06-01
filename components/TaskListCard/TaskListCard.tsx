@@ -1,4 +1,4 @@
-import { TaskList } from "@/services/taskLists/getTaskLists";
+import { TaskList } from "@/types/taskLists";
 import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
