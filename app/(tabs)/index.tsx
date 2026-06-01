@@ -2,7 +2,7 @@ import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
 import FAB from "@/components/FAB";
 import TaskListCard from "@/components/TaskListCard/TaskListCard";
 import { useTaskLists } from "@/hooks/useTaskLists";
-import { TaskList } from "@/services/taskLists/getTaskLists";
+import { TaskList } from "@/types/taskLists";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, useFocusEffect } from "expo-router";
 import React, { useEffect, useState } from "react";

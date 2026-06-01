@@ -1,7 +1,7 @@
 import FAB from "@/components/FAB";
 import TodoItem from "@/components/TodoItemCard/TodoItem";
 import { useTodos } from "@/hooks/useTodos";
-import { Todo } from "@/services/tasks/getTodosWithCategories";
+import { Todo } from "@/types/tasks";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import React from "react";
 import {

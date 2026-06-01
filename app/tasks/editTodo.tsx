@@ -1,5 +1,5 @@
 import { useEditTodo } from "@/hooks/useEditTodo";
-import { Todo } from "@/services/tasks/getTodosWithCategories";
+import { Todo } from "@/types/tasks";
 import { router, useLocalSearchParams } from "expo-router";
 import {
     ActivityIndicator,
