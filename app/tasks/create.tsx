@@ -1,15 +1,15 @@
 import { useCreateTodo } from "@/hooks/useCreateTodo";
 import { router, useLocalSearchParams } from "expo-router";
 import {
-    ActivityIndicator,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 const PRIORITIES: {
@@ -118,9 +118,7 @@ export default function CreateTodoScreen() {
         </View>
 
         {/* Fecha */}
-        <Text style={[styles.label, { marginTop: 20 }]}>
-          FECHA LÍMITE (OPCIONAL)
-        </Text>
+        <Text style={[styles.label, { marginTop: 20 }]}>FECHA LÍMITE</Text>
         <TextInput
           style={styles.input}
           placeholder="YYYY-MM-DD"
