@@ -1,14 +1,5 @@
 import api from "@/services/api";
-import { Todo } from "./getTodosWithCategories";
-
-export interface UpdateTodoPayload {
-  title?: string;
-  description?: string;
-  completed?: boolean;
-  dueDate?: string;
-  priority?: "LOW" | "MEDIUM" | "HIGH";
-  categories?: string[];
-}
+import { Todo, UpdateTodoPayload } from "@/types/tasks";
 
 export const updateTodo = async (
   id: string,

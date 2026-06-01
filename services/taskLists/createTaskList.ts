@@ -1,11 +1,5 @@
 import api from "@/services/api";
-import { TaskList } from "./getTaskLists";
-
-export interface CreateTaskListPayload {
-  name: string;
-  description?: string;
-  color?: string;
-}
+import { CreateTaskListPayload, TaskList } from "@/types/taskLists";
 
 export const createTaskList = async (
   data: CreateTaskListPayload,

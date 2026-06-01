@@ -1,11 +1,5 @@
 import api from "@/services/api";
-
-interface CreateUserPayload {
-  name: string;
-  email: string;
-  password: string;
-  role: string;
-}
+import { CreateUserPayload } from "@/types/users";
 
 export const createUser = async (data: CreateUserPayload) => {
   const response = await api.post("/users", data);

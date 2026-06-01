@@ -1,11 +1,5 @@
 import api from "@/services/api";
-import { Todo } from "./getTodosWithCategories";
-
-export interface SearchTodosParams {
-  search: string;
-  completed?: boolean;
-  priority?: "LOW" | "MEDIUM" | "HIGH";
-}
+import { SearchTodosParams, Todo } from "@/types/tasks";
 
 export const searchTodos = async (
   params: SearchTodosParams,
