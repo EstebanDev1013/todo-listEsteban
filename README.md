@@ -55,7 +55,7 @@ EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=tu_sender_id
 EXPO_PUBLIC_FIREBASE_APP_ID=tu_app_id
 
 # Backend API
-EXPO_PUBLIC_API_URL=https://backend-1047964714716.us-central1.run.app
+EXPO_PUBLIC_API_URL=https://your-backend-url
 ```
 
 > Para desarrollo local, puedes apuntar `EXPO_PUBLIC_API_URL` a tu máquina: `http://<tu-ip-local>:8080`
