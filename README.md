@@ -77,14 +77,6 @@ En la terminal verás un código QR y las siguientes opciones:
 | `w`         | Abrir en el navegador (web)           |
 | escanear QR | Abrir en Expo Go (dispositivo físico) |
 
-## Links
-
-| Recurso                  | URL                                               |
-| ------------------------ | ------------------------------------------------- |
-| Backend API (producción) | https://backend-1047964714716.us-central1.run.app |
-
----
-
 ## Usuarios de prueba
 
 No hay usuarios predefinidos. Para probar la aplicación regístrate desde la pantalla de registro con cualquier email y contraseña válidos.
