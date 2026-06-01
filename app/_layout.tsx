@@ -25,7 +25,8 @@ export default function RootLayout() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChange((user) => {
-      const isAuthScreen = segments[0] === "login";
+      const isAuthScreen =
+        segments[0] === "login" || segments[0] === "register";
       if (!user && !isAuthScreen) {
         router.replace("/login");
       }
