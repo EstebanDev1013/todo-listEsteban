@@ -1,6 +1,7 @@
 import FAB from "@/components/FAB";
 import TaskListCard from "@/components/TaskListCard/TaskListCard";
 import { useTaskLists } from "@/hooks/useTaskLists";
+import { TaskList } from "@/services/taskLists/getTaskLists";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, useFocusEffect } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -16,7 +17,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
-  const { taskLists, loading, refreshing, error, onRefresh } = useTaskLists();
+  const { taskLists, loading, refreshing, error, onRefresh, removeTaskList } =
+    useTaskLists();
   const [fullName, setFullName] = useState<string>("");
 
   useEffect(() => {
@@ -26,6 +28,14 @@ export default function HomeScreen() {
     };
     loadFullName();
   }, []);
+
+  const handleDelete = async (taskList: TaskList) => {
+    try {
+      await removeTaskList(taskList);
+    } catch (e) {
+      console.log("Error al eliminar task list:", e);
+    }
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -76,7 +86,23 @@ export default function HomeScreen() {
           <FlatList
             data={taskLists}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <TaskListCard item={item} />}
+            renderItem={({ item }) => (
+              <TaskListCard
+                item={item}
+                onEdit={(taskList) =>
+                  router.push({
+                    pathname: "/editTaskList" as any,
+                    params: {
+                      id: taskList.id,
+                      name: taskList.name,
+                      description: taskList.description,
+                      color: taskList.color,
+                    },
+                  })
+                }
+                onDelete={handleDelete}
+              />
+            )}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
