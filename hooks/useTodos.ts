@@ -1,10 +1,7 @@
-import { createTodo, CreateTodoPayload } from "@/services/tasks/createTodo";
+import { CategoryWithTodos, CreateTodoPayload, Todo } from "@/types/tasks";
+import { createTodo } from "@/services/tasks/createTodo";
 import { deleteTodo } from "@/services/tasks/deleteTodo";
-import {
-  CategoryWithTodos,
-  getTodosWithCategories,
-  Todo,
-} from "@/services/tasks/getTodosWithCategories";
+import { getTodosWithCategories } from "@/services/tasks/getTodosWithCategories";
 import { updateTodo } from "@/services/tasks/updateTodo";
 import { useEffect, useState } from "react";
 

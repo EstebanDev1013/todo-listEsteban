@@ -1,9 +1,7 @@
-import {
-  createTaskList,
-  CreateTaskListPayload,
-} from "@/services/taskLists/createTaskList";
+import { CreateTaskListPayload, TaskList } from "@/types/taskLists";
+import { createTaskList } from "@/services/taskLists/createTaskList";
 import { deleteTaskList } from "@/services/taskLists/deleteTaskList";
-import { getTaskLists, TaskList } from "@/services/taskLists/getTaskLists";
+import { getTaskLists } from "@/services/taskLists/getTaskLists";
 import { useEffect, useState } from "react";
 
 export const useTaskLists = () => {

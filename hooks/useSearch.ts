@@ -1,4 +1,4 @@
-import { Todo } from "@/services/tasks/getTodosWithCategories";
+import { Todo } from "@/types/tasks";
 import { searchTodos } from "@/services/tasks/searchTodos";
 import { useState } from "react";
 

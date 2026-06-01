@@ -1,4 +1,4 @@
-import { Todo } from "@/services/tasks/getTodosWithCategories";
+import { Todo } from "@/types/tasks";
 import { updateTodo } from "@/services/tasks/updateTodo";
 import { router } from "expo-router";
 import { useState } from "react";

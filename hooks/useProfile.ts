@@ -1,8 +1,7 @@
-import {
-    CategoryWithTodos,
-    getTodosWithCategories,
-} from "@/services/tasks/getTodosWithCategories";
-import { getMe, Me } from "@/services/users/getMe";
+import { CategoryWithTodos } from "@/types/tasks";
+import { Me } from "@/types/users";
+import { getTodosWithCategories } from "@/services/tasks/getTodosWithCategories";
+import { getMe } from "@/services/users/getMe";
 import { useEffect, useState } from "react";
 
 export interface ProfileStats {
