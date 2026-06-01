@@ -1,8 +1,9 @@
 import { createTodo, CreateTodoPayload } from "@/services/tasks/createTodo";
+import { deleteTodo } from "@/services/tasks/deleteTodo";
 import {
-    CategoryWithTodos,
-    getTodosWithCategories,
-    Todo,
+  CategoryWithTodos,
+  getTodosWithCategories,
+  Todo,
 } from "@/services/tasks/getTodosWithCategories";
 import { updateTodo } from "@/services/tasks/updateTodo";
 import { useEffect, useState } from "react";
@@ -69,6 +70,21 @@ export const useTodos = (categoryId: string) => {
     }
   };
 
+  const removeTodo = async (todo: Todo) => {
+    try {
+      await deleteTodo(todo.id);
+      setCategory((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          todos: prev.todos.filter((t) => t.id !== todo.id),
+        };
+      });
+    } catch (e) {
+      throw new Error("No se pudo eliminar la tarea");
+    }
+  };
+
   useEffect(() => {
     fetchTodos();
   }, [categoryId]);
@@ -81,5 +97,6 @@ export const useTodos = (categoryId: string) => {
     onRefresh,
     addTodo,
     toggleTodo,
+    removeTodo,
   };
 };
