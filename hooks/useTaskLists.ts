@@ -1,7 +1,8 @@
 import {
-    createTaskList,
-    CreateTaskListPayload,
+  createTaskList,
+  CreateTaskListPayload,
 } from "@/services/taskLists/createTaskList";
+import { deleteTaskList } from "@/services/taskLists/deleteTaskList";
 import { getTaskLists, TaskList } from "@/services/taskLists/getTaskLists";
 import { useEffect, useState } from "react";
 
@@ -47,6 +48,15 @@ export const useTaskLists = () => {
     }
   };
 
+  const removeTaskList = async (taskList: TaskList) => {
+    try {
+      await deleteTaskList(taskList.id);
+      setTaskLists((prev) => prev.filter((t) => t.id !== taskList.id));
+    } catch (e) {
+      throw new Error("No se pudo eliminar la lista");
+    }
+  };
+
   useEffect(() => {
     fetchTaskLists();
   }, []);
@@ -58,5 +68,6 @@ export const useTaskLists = () => {
     error,
     onRefresh,
     addTaskList,
+    removeTaskList,
   };
 };
