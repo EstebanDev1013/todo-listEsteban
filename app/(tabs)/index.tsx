@@ -1,3 +1,4 @@
+import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
 import FAB from "@/components/FAB";
 import TaskListCard from "@/components/TaskListCard/TaskListCard";
 import { useTaskLists } from "@/hooks/useTaskLists";
@@ -19,6 +20,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function HomeScreen() {
   const { taskLists, loading, refreshing, error, onRefresh, removeTaskList } =
     useTaskLists();
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [taskListToDelete, setTaskListToDelete] = useState<TaskList | null>(
+    null,
+  );
+
   const [fullName, setFullName] = useState<string>("");
 
   useEffect(() => {
@@ -29,11 +35,20 @@ export default function HomeScreen() {
     loadFullName();
   }, []);
 
-  const handleDelete = async (taskList: TaskList) => {
+  const handleDelete = (taskList: TaskList) => {
+    setTaskListToDelete(taskList);
+    setDeleteModalVisible(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!taskListToDelete) return;
     try {
-      await removeTaskList(taskList);
+      await removeTaskList(taskListToDelete);
     } catch (e) {
       console.log("Error al eliminar task list:", e);
+    } finally {
+      setDeleteModalVisible(false);
+      setTaskListToDelete(null);
     }
   };
 
@@ -114,6 +129,14 @@ export default function HomeScreen() {
       <View style={styles.fabContainer}>
         <FAB onPress={() => router.push("/createTaskList")} />
       </View>
+      <ConfirmDeleteModal
+        visible={deleteModalVisible}
+        onConfirm={confirmDelete}
+        onCancel={() => {
+          setDeleteModalVisible(false);
+          setTaskListToDelete(null);
+        }}
+      />
     </SafeAreaView>
   );
 }
