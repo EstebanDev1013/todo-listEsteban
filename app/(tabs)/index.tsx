@@ -5,7 +5,7 @@ import { useTaskLists } from "@/hooks/useTaskLists";
 import { TaskList } from "@/types/taskLists";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, useFocusEffect } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -27,14 +27,6 @@ export default function HomeScreen() {
 
   const [fullName, setFullName] = useState<string>("");
 
-  useEffect(() => {
-    const loadFullName = async () => {
-      const name = await AsyncStorage.getItem("fullName");
-      if (name) setFullName(name);
-    };
-    loadFullName();
-  }, []);
-
   const handleDelete = (taskList: TaskList) => {
     setTaskListToDelete(taskList);
     setDeleteModalVisible(true);
@@ -55,6 +47,9 @@ export default function HomeScreen() {
   useFocusEffect(
     React.useCallback(() => {
       onRefresh();
+      AsyncStorage.getItem("fullName").then((name) => {
+        if (name) setFullName(name);
+      });
     }, []),
   );
 

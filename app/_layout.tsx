@@ -24,15 +24,17 @@ export default function RootLayout() {
   const segments = useSegments();
 
   useEffect(() => {
+    let isFirstCall = true;
     const unsubscribe = onAuthStateChange((user) => {
       const isAuthScreen =
         segments[0] === "login" || segments[0] === "register";
       if (!user && !isAuthScreen) {
         router.replace("/login");
       }
-      if (user && isAuthScreen) {
+      if (isFirstCall && user && isAuthScreen) {
         router.replace("/(tabs)");
       }
+      isFirstCall = false;
       setIsReady(true);
     });
 
