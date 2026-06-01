@@ -1,4 +1,5 @@
 import { login } from "@/services/auth/authServices";
+import { getMe } from "@/services/users/getMe";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -15,6 +16,8 @@ export const useLogin = () => {
       setError(null);
       const token = await login(email, password);
       await AsyncStorage.setItem("token", token);
+      const me = await getMe();
+      await AsyncStorage.setItem("fullName", me.name);
       router.replace("/(tabs)");
     } catch (e) {
       setError("Correo o contraseña incorrectos");
