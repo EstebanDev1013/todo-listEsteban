@@ -62,7 +62,7 @@ export const useRegister = () => {
         password,
         role: "USER",
       });
-      const { user, token } = await register(email, password);
+      const { token } = await register(email, password);
       await AsyncStorage.setItem("token", token);
       await AsyncStorage.setItem("fullName", fullName);
 
